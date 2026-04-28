@@ -29,7 +29,7 @@ public class Account
             .Bind(() => name.Length > 50
                 ? Result.Failure("The name cannot be longer than 50 characters.")
                 : Result.Success)
-            .Bind(() => Guard.AgainstNullOrWhiteSpace(type, "The field type is manddatory."))
+            .Bind(() => Guard.AgainstNullOrWhiteSpace(type, "The field type is mandatory."))
             .Bind(() => type.Length > 20 ? Result.Failure("The type cannot be longer than 20 characters.") : Result.Success)
             .Bind(() => Price.Create(initialBalance))
             .Map(validPrice => new Account(userId, name, type, validPrice));
