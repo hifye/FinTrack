@@ -28,7 +28,8 @@ public class TransactionRepository(IUnitOfWork unitOfWork, IDbConnection connect
                 transaction.Amount,
                 transaction.Type,
                 transaction.Description
-            }
+            },
+            unitOfWork.Transaction
         );
 
     public async Task<bool> UpdateTransaction(Transaction transaction) =>
@@ -39,9 +40,10 @@ public class TransactionRepository(IUnitOfWork unitOfWork, IDbConnection connect
                 transaction.Amount,
                 transaction.Type,
                 transaction.Description
-            }
+            },
+            unitOfWork.Transaction
         ) > 0;
 
     public async Task<bool> DeleteTransaction(Guid id) =>
-        await connection.ExecuteAsync(TransactionSql.DeleteTransaction, new { Id = id }) > 0;
+        await connection.ExecuteAsync(TransactionSql.DeleteTransaction, new { Id = id }, unitOfWork.Transaction) > 0;
 }

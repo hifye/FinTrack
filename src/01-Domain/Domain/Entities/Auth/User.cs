@@ -6,17 +6,18 @@ namespace Domain.Entities.Auth;
 public class User
 {
     public Guid Id { get; private set; }
-    public string Name { get; private set; }
-    public Email Email { get; private set; }
-    public string PasswordHash { get; set; }
-    public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
+    public string Name { get; private set; } = null!;
+    public Email Email { get; private set; } = null!;
+    public string PasswordHash { get; private set; } = null!;
+    public DateTime CreatedAt { get; private set; }
+    public DateTime UpdatedAt { get; private set; }
 
     private User(string name, Email email, string passwordHash)
     {
         Name = name;
         Email = email;
         PasswordHash = passwordHash;
+        CreatedAt = DateTime.UtcNow;
     }
     
     public static Result<User> Create(string name, string email, string passwordHash)
@@ -25,10 +26,21 @@ public class User
             .AgainstNullOrWhiteSpace(name, "Name cannot be empty.")
             .Bind(() => name.Length > 200
                 ? Result.Failure("Name cannot be longer than 200 characters.")
-                : Result.Success)
+                : Result.Success())
             .Bind(() => Guard.AgainstNullOrWhiteSpace(passwordHash, "Password cannot be empty."))
             .Bind(() => Email.Create(email))
             .Map(validEmail => new User(name, validEmail, passwordHash));
+    }
+
+    public Result Update(string passwordHash)
+    {
+        return Guard.AgainstNullOrWhiteSpace(passwordHash, "Password cannot be empty.")
+            .Bind(() =>
+            {
+                PasswordHash = passwordHash;
+                UpdatedAt = DateTime.UtcNow;
+                return Result.Success();
+            });
     }
     
     protected User() { }

@@ -10,9 +10,9 @@ public class Transaction
     public Guid AccountId { get; private set; }
     public Guid CategoryId { get; private set; }
     public Guid RecurringId { get; private set; }
-    public Price Amount { get; private set; }
-    public string Type { get; private set; }
-    public string Description { get; private set; }
+    public Price Amount { get; private set; } = null!;
+    public string Type { get; private set; } = null!;
+    public string Description { get; private set; } = null!;
     public DateTime TransactionDate { get; private set; }
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
@@ -38,10 +38,10 @@ public class Transaction
             .Bind(() => Guard.AgainstNullOrWhiteSpace(type, "The field Type is mandatory"))
             .Bind(() => type.Length > 100
                 ? Result.Failure("The field Type cannot be longer than 100 characters.")
-                : Result.Success)
+                : Result.Success())
             .Bind(() => description.Length > 250
                 ? Result.Failure("The field Description cannot be longer than 250 characters.")
-                : Result.Success)
+                : Result.Success())
             .Bind(() => Price.Create(amount))
             .Map(validPrice =>
                 new Transaction(userId, accountId, categoryId, recurringId, validPrice, type, description));

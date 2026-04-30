@@ -23,7 +23,7 @@ public class Result(bool isSuccess, string? error)
     /// <summary>
     /// Retorna um resultado de sucesso.
     /// </summary>
-    public static Result Success => new Result(true, null);
+    public static Result Success() => new Result(true, null);
 
     /// <summary>
     /// Cria um resultado de falha com uma mensagem específica.
@@ -67,8 +67,22 @@ public class Result(bool isSuccess, string? error)
     /// </summary>
     public static Result Try(Action action, string errorMessage)
     {
-        try { action(); return Result.Success; }
+        try { action(); return Result.Success(); }
         catch { return Result.Failure(errorMessage); }
+    }
+
+    public async Task<Result> BindAsync(Func<Task<Result>> func)
+    {
+        if (IsFailure)
+            return this;
+        return await func();
+    }
+    
+    public async Task<Result<T>> BindAsync<T>(Func<Task<Result<T>>> func)
+    {
+        if (IsFailure)
+            return Result<T>.Failure(Error!);
+        return await func();
     }
 }
 
@@ -116,5 +130,19 @@ public class Result<T> : Result
         if (IsFailure)
             return Result<K>.Failure(Error!);
         return Result<K>.Success(func(Value!));
+    }
+
+    public async Task<Result<K>> BindAsync<K>(Func<T, Task<Result<K>>> func)
+    {
+        if(IsFailure)
+            return Result<K>.Failure(Error!);
+        return await func(Value!);
+    }
+    
+    public async Task<Result> BindAsync(Func<T, Task<Result>> func)
+    {
+        if (IsFailure)
+            return Result.Failure(Error!);
+        return await func(Value!);
     }
 }

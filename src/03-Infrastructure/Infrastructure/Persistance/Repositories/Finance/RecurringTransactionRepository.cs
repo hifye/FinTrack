@@ -28,7 +28,8 @@ public class RecurringTransactionRepository(IUnitOfWork unitOfWork, IDbConnectio
                 recurringTransaction.Type,
                 recurringTransaction.Description,
                 recurringTransaction.Frequency
-            }
+            },
+            unitOfWork.Transaction
         );
 
     public async Task<bool> UpdateRecurringTransaction(RecurringTransaction recurringTransaction) =>
@@ -40,13 +41,15 @@ public class RecurringTransactionRepository(IUnitOfWork unitOfWork, IDbConnectio
                 recurringTransaction.Amount,
                 recurringTransaction.Type,
                 recurringTransaction.Description,
-                recurringTransaction.Frequency,
-            }
+                recurringTransaction.Frequency
+            },
+            unitOfWork.Transaction
         ) > 0;
 
     public async Task<bool> DeleteRecurringTransaction(Guid id) =>
         await connection.ExecuteAsync(
             RecurringTransactionSql.DeleteRecurringTransaction,
-            new { Id = id }
+            new { Id = id },
+            unitOfWork.Transaction
         ) > 0;
 }

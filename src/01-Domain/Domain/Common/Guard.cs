@@ -16,7 +16,7 @@ public static class Guard
         if (String.IsNullOrWhiteSpace(value))
             return Result.Failure(message);
 
-        return Result.Success;
+        return Result.Success();
     }
 
     /// <summary>
@@ -30,7 +30,7 @@ public static class Guard
         if (condition)
             return Result.Failure(message);
         
-        return Result.Success;
+        return Result.Success();
     }
     
     /// <summary>

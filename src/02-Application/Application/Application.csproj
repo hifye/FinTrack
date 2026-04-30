@@ -12,6 +12,8 @@
 
     <ItemGroup>
       <Folder Include="Abstraction\Queries\" />
+      <Folder Include="Features\Auth\" />
+      <Folder Include="Features\Finance\" />
     </ItemGroup>
 
     <ItemGroup>

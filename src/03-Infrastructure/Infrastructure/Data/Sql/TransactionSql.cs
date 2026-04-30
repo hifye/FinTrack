@@ -11,6 +11,7 @@ public static class TransactionSql
                                              amount as Amount,
                                              type as Type,
                                              description as Description
+                                             from finance.transactions
                                              where id = @Id
                                              """;
     

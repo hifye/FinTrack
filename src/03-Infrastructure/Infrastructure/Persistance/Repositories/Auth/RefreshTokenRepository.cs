@@ -25,7 +25,14 @@ public class RefreshTokenRepository(IUnitOfWork unitOfWork, IDbConnection connec
     ) =>
         await connection.ExecuteAsync(
             RefreshTokenSql.CreateRefreshToken,
-            new { refreshToken.UserId, refreshToken.Token },
+            new
+            {
+                refreshToken.UserId,
+                refreshToken.Token,
+                refreshToken.ExpiresAt,
+                refreshToken.IsRevoked,
+                refreshToken.CreatedAt,
+            },
             unitOfWork.Transaction
         );
 
@@ -38,4 +45,14 @@ public class RefreshTokenRepository(IUnitOfWork unitOfWork, IDbConnection connec
             new { Id = id },
             unitOfWork.Transaction
         ) > 0;
+
+    public async Task RevokeAllRefreshTokens(
+        Guid userId,
+        CancellationToken cancellationToken = default
+    ) =>
+        await connection.ExecuteAsync(
+            RefreshTokenSql.RevokeAllByUser,
+            new { UserId = userId },
+            unitOfWork.Transaction
+        );
 }

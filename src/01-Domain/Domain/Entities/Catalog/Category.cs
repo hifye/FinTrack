@@ -6,8 +6,8 @@ public class Category
 {
     public Guid Id { get; private set; }
     public Guid UserId { get; private set; }
-    public string Name { get; private set; }
-    public string Type { get; private set; }
+    public string Name { get; private set; } = null!;
+    public string Type { get; private set; } = null!;
     public bool IsActive { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
@@ -16,6 +16,8 @@ public class Category
         UserId = userId;
         Name = name;
         Type = type;
+        IsActive = true;
+        CreatedAt = DateTime.UtcNow;
     }
     
     public static Result<Category> Create(Guid userId, string name, string type)
@@ -24,12 +26,32 @@ public class Category
             .Bind(() => Guard.AgainstNullOrWhiteSpace(name, "The field name is mandatory."))
             .Bind(() => name.Length > 100
                 ? Result.Failure("The field name cannot be longer than 100 characters.")
-                : Result.Success)
+                : Result.Success())
             .Bind(() => Guard.AgainstNullOrWhiteSpace(type, "The field type is mandatory"))
             .Bind(() => type.Length > 100
                 ? Result.Failure("The field type cannot be longer than 100 characters.")
-                : Result.Success)
+                : Result.Success())
             .Map(() => new Category(userId, name, type));
+    }
+
+    public Result Update(Guid id, string name, string type, bool isActive)
+    {
+        return Guard.AgainstOutOfRange(id == Guid.Empty, "The Category id is mandatory.")
+            .Bind(() => Guard.AgainstNullOrWhiteSpace(name, "The field name is mandatory."))
+            .Bind(() => name.Length > 100
+                ? Result.Failure("The field name cannot be longer than 100 characters.")
+                : Result.Success())
+            .Bind(() => Guard.AgainstNullOrWhiteSpace(type, "The field type is mandatory"))
+            .Bind(() => type.Length > 100
+                ? Result.Failure("The field type cannot be longer than 100 characters.")
+                : Result.Success())
+            .Bind(() =>
+            {
+                Name = name;
+                Type = type;
+                IsActive = isActive;
+                return Result.Success();
+            });
     }
     
     protected Category() { }
