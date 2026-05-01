@@ -24,7 +24,7 @@ public class RefreshTokenSql
                                             where id = @Id
                                             """;
 
-    public const string RevokeAllByUser = """
+    public const string RevokeAllUserTokens = """
                                           update RefreshTokens
                                           set is_revoked = true
                                           where userId = @UserId

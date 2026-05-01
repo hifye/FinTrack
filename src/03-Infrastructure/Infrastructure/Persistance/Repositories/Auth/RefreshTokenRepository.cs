@@ -46,12 +46,12 @@ public class RefreshTokenRepository(IUnitOfWork unitOfWork, IDbConnection connec
             unitOfWork.Transaction
         ) > 0;
 
-    public async Task RevokeAllRefreshTokens(
+    public async Task RevokeAllUserTokens(
         Guid userId,
         CancellationToken cancellationToken = default
     ) =>
         await connection.ExecuteAsync(
-            RefreshTokenSql.RevokeAllByUser,
+            RefreshTokenSql.RevokeAllUserTokens,
             new { UserId = userId },
             unitOfWork.Transaction
         );

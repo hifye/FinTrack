@@ -3,6 +3,7 @@ using Application.Abstraction.Persistance.Repositories.Auth;
 using Application.Interfaces.UnitOfWork;
 using Dapper;
 using Domain.Entities.Auth;
+using Domain.ValueObjects;
 using Infrastructure.Data.Sql;
 
 namespace Infrastructure.Persistance.Repositories.Auth;
@@ -11,6 +12,9 @@ public class UserRepository(IUnitOfWork unitOfWork, IDbConnection connection) : 
 {
     public async Task<User> GetUserById(Guid id) =>
         (await connection.QueryFirstOrDefaultAsync<User>(UserSql.GetUserById, new { Id = id }))!;
+
+    public async Task<User?> GetUserByEmail(Email email) =>
+        await connection.QueryFirstOrDefaultAsync<User>(UserSql.GetUserByEmail, new { Email = email });
 
     public async Task CreateUser(User user) =>
         await connection.ExecuteAsync(

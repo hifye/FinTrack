@@ -8,9 +8,9 @@ namespace Application.Features.Catalog.Commands.Category.DeleteCategory;
 public class DeleteCategoryCommandHandler(ICategoryRepository categoryRepository, IUnitOfWork unitOfWork)
     : IRequestHandler<DeleteCategoryCommand, Result>
 {
-    public async Task<Result> Handle(DeleteCategoryCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(DeleteCategoryCommand command, CancellationToken cancellationToken)
     {
-        var deleted = await categoryRepository.DeleteCategory(request.Id);
+        var deleted = await categoryRepository.DeleteCategory(command.Id);
         if (!deleted)
             return Result.Failure("Category not found.");
         
