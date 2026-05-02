@@ -2,6 +2,7 @@
 using Application.Features.Auth.Commands.User.Login;
 using Application.Features.Auth.Commands.User.Logout;
 using Application.Features.Auth.Commands.User.Register;
+using Application.Features.Auth.Commands.User.Update;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,13 +31,22 @@ public class AuthController(IMediator mediator) : ControllerBase
         var result = await mediator.Send(command);
         return result.IsSuccess ? Created() : BadRequest(result.Error);
     }
+    
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [HttpPut("update")]
+    public async Task<ActionResult> Update(UpdateUserCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.IsSuccess ? Ok() : NotFound(result.Error);
+    }
 
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [HttpPost("logout")]
+    [HttpPut("logout")]
     public async Task<ActionResult> Logout(LogoutCommand command)
     {
-        await mediator.Send(command);
-        return NoContent();
+        var result = await mediator.Send(command);
+        return result.IsSuccess ? NoContent() : BadRequest(result.Error);
     }
     
     [ProducesResponseType(StatusCodes.Status200OK)]

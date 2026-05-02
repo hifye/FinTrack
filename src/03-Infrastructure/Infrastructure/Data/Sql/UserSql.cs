@@ -28,13 +28,22 @@ public class UserSql
                                      insert into auth.users(
                                      	name,
                                      	email,
-                                     	password_hash
+                                     	password_hash,
+                                     	created_at
                                      )
                                      values(
                                             (@Name),
                                             (@Email),
-                                            (@PasswordHash)
+                                            (@PasswordHash),
+                                            (@CreatedAt)
                                      )
+                                     """;
+    
+    public const string UpdateUser = """
+                                     update auth.users
+                                     set password_hash = @PasswordHash,
+                                     updated_at = @UpdatedAt
+                                     where id = @Id
                                      """;
     
     public const string DeleteUser = """

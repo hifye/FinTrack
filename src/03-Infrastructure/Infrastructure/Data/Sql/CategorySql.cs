@@ -14,8 +14,8 @@ public class CategorySql
                                           """;
     
     public const string CreateCategory = """
-                                          insert into catalog.categories (user_id, name, type)
-                                          values (@UserId, @Name, @Type)
+                                          insert into catalog.categories (user_id, name, type, is_active, created_at)
+                                          values (@UserId, @Name, @Type, @IsActive, @CreatedAt)
                                           """;
     
     public const string UpdateCategory = """

@@ -23,7 +23,9 @@ public class CategoryRepository(IUnitOfWork unitOfWork, IDbConnection connection
             {
                 category.UserId,
                 category.Name,
-                category.Type
+                category.Type,
+                category.IsActive,
+                category.CreatedAt
             },
             unitOfWork.Transaction
         );
@@ -34,10 +36,9 @@ public class CategoryRepository(IUnitOfWork unitOfWork, IDbConnection connection
             new
             {
                 category.Id,
-                category.UserId,
                 category.Name,
                 category.Type,
-                category.IsActive,
+                category.IsActive
             },
             unitOfWork.Transaction
         ) > 0;

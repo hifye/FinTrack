@@ -37,7 +37,7 @@ public class Result(bool isSuccess, string? error)
     /// </summary>
     public Result Bind(Func<Result> func)
     {
-        if (IsSuccess)
+        if (IsFailure)
             return this;
         return func();
     }

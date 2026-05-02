@@ -30,6 +30,13 @@ public class LoginCommandHandler(
         if(user is null || !passwordHasher.VerifyPassword(command.Password, user.PasswordHash))
             return Result<TokenResponse>.Failure("Invalid credentials");
         
+        if(passwordHasher.NeedsRehash(user.PasswordHash))
+        {
+            var hash = passwordHasher.HashPassword(command.Password);
+            user.PasswordHash = hash;
+            await userRepository.UpdateUser(user);
+        }
+        
         await refreshTokenRepository.RevokeAllUserTokens(user.Id, cancellationToken);
         
         var accessToken = tokenService.GenerateToken(user);

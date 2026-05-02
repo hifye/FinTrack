@@ -8,7 +8,7 @@ public class User
     public Guid Id { get; private set; }
     public string Name { get; private set; } = null!;
     public Email Email { get; private set; } = null!;
-    public string PasswordHash { get; private set; } = null!;
+    public string PasswordHash { get; set; } = null!;
     public DateTime CreatedAt { get; private set; }
     public DateTime UpdatedAt { get; private set; }
 
