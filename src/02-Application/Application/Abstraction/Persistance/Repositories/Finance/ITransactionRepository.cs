@@ -1,5 +1,4 @@
-﻿using System.Transactions;
-using Transaction = Domain.Entities.Finance.Transaction;
+﻿using Transaction = Domain.Entities.Finance.Transaction;
 
 namespace Application.Abstraction.Persistance.Repositories.Finance;
 

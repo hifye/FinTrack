@@ -2,8 +2,8 @@
 using Application.Features.Auth.Responses;
 using Application.Interfaces.Services;
 using Application.Interfaces.UnitOfWork;
+using Application.Settings;
 using Domain.Common;
-using Infrastructure.Settings;
 using MediatR;
 using Microsoft.Extensions.Options;
 

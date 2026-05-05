@@ -3,30 +3,40 @@
 public class RefreshTokenSql
 {
     public const string GetRefreshToken = """
-        select id as Id,
-        user_id as UserId,
-        token as Token,
-        expires_at as ExpiresAt,
-        is_revoked as IsRevoked,
-        created_at as CreatedAt
-        from auth.refresh_tokens
-        where token = @Token
-        """;
+                                          SELECT id                    AS Id,
+                                                 user_id               AS UserId,
+                                                 token                 AS Token,
+                                                 expires_at            AS ExpiresAt,
+                                                 is_revoked            AS IsRevoked,
+                                                 created_at            AS CreatedAt
+                                          FROM auth.refresh_tokens
+                                          WHERE token = @Token
+                                          """;
 
     public const string CreateRefreshToken = """
-        insert into auth.refresh_tokens (user_id, token, expires_at, is_revoked, created_at)
-        values (@UserId, @Token, @ExpiresAt, @IsRevoked, @CreatedAt)
-        """;
+                                             INSERT INTO auth.refresh_tokens 
+                                                 (user_id, 
+                                                  token, 
+                                                  expires_at,
+                                                  is_revoked, 
+                                                  created_at)
+                                             VALUES (
+                                                  (@UserId), 
+                                                  (@Token),
+                                                  (@ExpiresAt), 
+                                                  (@IsRevoked), 
+                                                  (@CreatedAt)
+                                             """;
 
     public const string RevokeRefreshToken = """
-        update auth.refresh_tokens
-        set is_revoked = true
-        where id = @Id
-        """;
+                                             UPDATE auth.refresh_tokens
+                                             SET is_revoked = true
+                                             WHERE id = @Id
+                                             """;
 
     public const string RevokeAllUserTokens = """
-        update auth.refresh_tokens
-        set is_revoked = true
-        where user_id = @UserId
-        """;
+                                              UPDATE auth.refresh_tokens
+                                              SET is_revoked = true
+                                              WHERE user_id = @UserId
+                                              """;
 }

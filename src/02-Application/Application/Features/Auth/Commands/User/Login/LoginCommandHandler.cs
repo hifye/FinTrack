@@ -1,12 +1,10 @@
 ﻿using Application.Abstraction.Persistance.Repositories.Auth;
-using Application.Features.Auth.Commands.User.Login;
 using Application.Features.Auth.Responses;
 using Application.Interfaces.Services;
 using Application.Interfaces.UnitOfWork;
+using Application.Settings;
 using Domain.Common;
-using Domain.Entities.Auth;
 using Domain.ValueObjects;
-using Infrastructure.Settings;
 using MediatR;
 using Microsoft.Extensions.Options;
 

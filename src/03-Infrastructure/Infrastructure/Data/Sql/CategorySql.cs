@@ -3,32 +3,62 @@
 public class CategorySql
 {
     public const string GetCategoryById = """
-        select id as Id,
-          user_id as UserId,
-          name as Name,
-          type as Type,
-          is_active as IsActive,
-          created_at as CreatedAt
-        from catalog.categories
-        where id = @Id
-        """;
+                                          SELECT id              AS Id,
+                                                 name            AS Name,
+                                                 type            AS Type,
+                                                 is_active       AS IsActive,
+                                                 created_at      AS CreatedAt
+                                          FROM catalog.categories
+                                          WHERE id = @Id
+                                          """;
+
+    public const string GetCategoryDetails = """
+                                             SELECT id              AS Id,
+                                                    name            AS Name,
+                                                    type            AS Type,
+                                                    is_active       AS IsActive,
+                                                    created_at      AS CreatedAt
+                                             FROM catalog.categories
+                                             WHERE id = @Id
+                                             """;
+
+    public const string GetCategoriesByUserId = """
+                                                SELECT id              AS Id,
+                                                     name              AS Name,
+                                                     type              AS Type,
+                                                     is_active         AS IsActive,
+                                                     created_at        AS CreatedAt
+                                                FROM catalog.categories
+                                                WHERE user_id = @UserId
+                                                ORDER BY created_at DESC
+                                                """;
 
     public const string CreateCategory = """
-        insert into catalog.categories (user_id, name, type, is_active, created_at)
-        values (@UserId, @Name, @Type, @IsActive, @CreatedAt)
-        """;
+                                         INSERT INTO catalog.categories 
+                                             (user_id, 
+                                              name, 
+                                              type, 
+                                              is_active, 
+                                              created_at)
+                                         VALUES (
+                                              (@UserId), 
+                                              (@Name),
+                                              (@Type), 
+                                              (@IsActive),
+                                              (@CreatedAt)
+                                         """;
 
     public const string UpdateCategory = """
-        update catalog.categories
-        set name = @Name,
-            type = @Type,
-            is_active = @IsActive
-        where id = @Id
-        """;
+                                         UPDATE catalog.categories
+                                         SET name = @Name,
+                                            type = @Type,
+                                            is_active = @IsActive
+                                         WHERE id = @Id
+                                         """;
 
     public const string DeleteCategory = """
-        update catalog.categories
-        set is_active = false
-        where id = @Id
-        """;
+                                         UPDATE catalog.categories
+                                         SET is_active = false
+                                         WHERE id = @Id
+                                         """;
 }
