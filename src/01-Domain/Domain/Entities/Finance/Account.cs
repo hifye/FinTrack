@@ -10,7 +10,7 @@ public class Account
     public string Name { get; private set; } = null!;
     public string Type { get; private set; } = null!;
     public Price InitialBalance { get; private set; } = null!;
-    public Price CurrenBalance { get; private set; } = null!;
+    public Price CurrentBalance { get; private set; } = null!;
     public bool IsActive { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
@@ -20,6 +20,9 @@ public class Account
         Name = name;
         Type = type;
         InitialBalance = initialBalance;
+        CurrentBalance = initialBalance;
+        CreatedAt = DateTime.UtcNow;
+        IsActive = true;
     }
     
     public static Result<Account> Create(Guid userId, string name, string type, decimal initialBalance)
@@ -33,6 +36,29 @@ public class Account
             .Bind(() => type.Length > 20 ? Result.Failure("The type cannot be longer than 20 characters.") : Result.Success())
             .Bind(() => Price.Create(initialBalance))
             .Map(validPrice => new Account(userId, name, type, validPrice));
+    }
+    
+    public Result Patch(string? type, bool? isActive)
+    {
+        return Guard.AgainstOutOfRange(type == null && isActive == null, "At least one field must be provided for patching.")
+            .Bind(() => type != null ? UpdateType(type) : Result.Success())
+            .Bind(() => isActive != null ? UpdateActive(isActive.Value) : Result.Success());
+    }
+
+    private Result UpdateType(string type)
+    {
+        return Guard.AgainstOutOfRange(type.Length > 20, "The type cannot be longer than 20 characters.")
+            .Bind(() =>
+            {
+                Type = type;
+                return Result.Success();
+            });   
+    }
+
+    private Result UpdateActive(bool isActive)
+    {
+        IsActive = isActive;
+        return Result.Success();  
     }
 
     protected Account()

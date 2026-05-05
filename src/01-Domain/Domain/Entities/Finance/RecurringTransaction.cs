@@ -15,7 +15,7 @@ public class RecurringTransaction
     public string Frequency { get; private set; } = null!;
     public DateTime StartDate { get; private set; }
     public DateTime EndDate { get; private set; }
-    public DateTime NextOccurence { get; private set; }
+    public DateTime NextOccurrence { get; private set; }
     public bool IsActive { get; private set; }
     public DateTime CreatedAt { get; private set; }
 
@@ -29,6 +29,11 @@ public class RecurringTransaction
         Type = type;
         Description = description;
         Frequency = frequency;
+        NextOccurrence = DateTime.UtcNow.AddDays(30);
+        StartDate = DateTime.UtcNow;
+        EndDate = NextOccurrence;
+        IsActive = true;
+        CreatedAt = DateTime.UtcNow;
     }
 
     public static Result<RecurringTransaction> Create(Guid userId, Guid accountId, Guid categoryId, decimal amount, string type,
@@ -52,7 +57,62 @@ public class RecurringTransaction
             .Map(validAmount =>
                 new RecurringTransaction(userId, accountId, categoryId, validAmount, type, description, frequency));
     }
+    
+    public Result Patch(decimal? amount, string? type, string? description, string? frequency, bool? isActive)
+    {
+        return Guard.AgainstOutOfRange(amount == null && type == null && description == null && frequency == null && isActive == null, "At least one field must be provided for patching.")
+            .Bind(() => amount != null ? UpdateAmount(amount.Value) : Result.Success())
+            .Bind(() => type != null ? UpdateType(type) : Result.Success())
+            .Bind(() => description != null ? UpdateDescription(description) : Result.Success())
+            .Bind(() => frequency != null ? UpdateFrequency(frequency) : Result.Success())
+            .Bind(() => isActive != null ? UpdateIsActive(isActive.Value) : Result.Success());
+    }
 
+    private Result UpdateAmount(decimal amount)
+    {
+        return Price.Create(amount)
+            .Bind(validAmount =>
+            {
+                Amount = validAmount;
+                return Result.Success();
+            });
+    }
+
+    private Result UpdateType(string type)
+    {
+        return Guard.AgainstOutOfRange(type.Length > 100, "The field type cannot be longer than 100 characters.")
+            .Bind(() =>
+            {
+                Type = type;
+                return Result.Success();
+            });
+    }
+
+    private Result UpdateDescription(string description)
+    {
+        return Guard.AgainstOutOfRange(description.Length > 250, "The field Description cannot be longer than 250 characters.")
+            .Bind(() =>
+            {
+                Description = description;
+                return Result.Success();
+            });
+    }
+
+    private Result UpdateFrequency(string frequency)
+    {
+        return Guard.AgainstOutOfRange(frequency.Length > 50, "The field Frequency cannot be longer than 50 characters.")
+            .Bind(() =>
+            {
+                Frequency = frequency;
+                return Result.Success();
+            });
+    }
+    
+    private Result UpdateIsActive(bool isActive)
+    {
+        IsActive = isActive;
+        return Result.Success();
+    }
     protected RecurringTransaction()
     {
     }

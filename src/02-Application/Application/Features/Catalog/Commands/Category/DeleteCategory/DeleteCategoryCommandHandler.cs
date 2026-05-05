@@ -10,11 +10,11 @@ public class DeleteCategoryCommandHandler(ICategoryRepository categoryRepository
 {
     public async Task<Result> Handle(DeleteCategoryCommand command, CancellationToken cancellationToken)
     {
-        var deleted = await categoryRepository.DeleteCategory(command.Id);
-        if (!deleted)
-            return Result.Failure("Category not found.");
-        
-        await unitOfWork.CommitAsync();
-        return Result.Success();
+            var deleted = await categoryRepository.DeleteCategory(command.Id);
+            if (!deleted)
+                return Result.Failure("Category not found.");
+            
+            await unitOfWork.CommitAsync();
+            return Result.Success();
     }
 }

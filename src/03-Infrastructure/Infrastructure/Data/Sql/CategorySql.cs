@@ -3,31 +3,32 @@
 public class CategorySql
 {
     public const string GetCategoryById = """
-                                          select id as Id,
-                                            user_id as UserId,
-                                            name as Name,
-                                            type as Type,
-                                            is_active as IsActive,
-                                            created_at as CreatedAt
-                                          from catalog.categories
-                                          where id = @Id
-                                          """;
-    
+        select id as Id,
+          user_id as UserId,
+          name as Name,
+          type as Type,
+          is_active as IsActive,
+          created_at as CreatedAt
+        from catalog.categories
+        where id = @Id
+        """;
+
     public const string CreateCategory = """
-                                          insert into catalog.categories (user_id, name, type, is_active, created_at)
-                                          values (@UserId, @Name, @Type, @IsActive, @CreatedAt)
-                                          """;
-    
+        insert into catalog.categories (user_id, name, type, is_active, created_at)
+        values (@UserId, @Name, @Type, @IsActive, @CreatedAt)
+        """;
+
     public const string UpdateCategory = """
-                                          update catalog.categories
-                                          set name = @Name,
-                                              type = @Type,
-                                              is_active = @IsActive
-                                          where id = @Id
-                                          """;
-    
+        update catalog.categories
+        set name = @Name,
+            type = @Type,
+            is_active = @IsActive
+        where id = @Id
+        """;
+
     public const string DeleteCategory = """
-                                          delete from catalog.categories
-                                          where id = @Id
-                                          """;
+        update catalog.categories
+        set is_active = false
+        where id = @Id
+        """;
 }

@@ -1,10 +1,10 @@
 ﻿using FluentValidation;
 
-namespace Application.Features.Auth.Commands.User.Update;
+namespace Application.Features.Auth.Commands.User.UpdatePassword;
 
-public class UpdateUserCommandValidator : AbstractValidator<UpdateUserCommand>
+public class UpdatePasswordCommandValidator : AbstractValidator<UpdatePasswordCommand>
 {
-    public UpdateUserCommandValidator()
+    public UpdatePasswordCommandValidator()
     {
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Password is required.")

@@ -25,7 +25,9 @@ public class Transaction
         RecurringId = recurringId;
         Amount = amount;
         Type = type;
-        Description = description;   
+        Description = description;
+        TransactionDate = DateTime.UtcNow;
+        CreatedAt = DateTime.UtcNow;
     }
 
     public static Result<Transaction> Create(Guid userId, Guid accountId, Guid categoryId, Guid recurringId,
@@ -45,6 +47,35 @@ public class Transaction
             .Bind(() => Price.Create(amount))
             .Map(validPrice =>
                 new Transaction(userId, accountId, categoryId, recurringId, validPrice, type, description));
+    }
+
+    public Result Patch(string? type, string? description)
+    {
+        return Guard.AgainstOutOfRange(type == null && description == null, "At least one field must be provided for patching.")
+            .Bind(() => type != null ? UpdateType(type) : Result.Success())
+            .Bind(() => description != null ? UpdateDescription(description) : Result.Success())
+            .Map(() => UpdatedAt = DateTime.UtcNow)
+            .Bind(Result.Success);
+    }
+
+    private Result UpdateType(string type)
+    {
+        return Guard.AgainstOutOfRange(type.Length > 100, "The field type cannot be longer than 100 characters.")
+            .Bind(() =>
+            {
+                Type = type;
+                return Result.Success();
+            });
+    }
+
+    private Result UpdateDescription(string description)
+    {
+        return Guard.AgainstOutOfRange(description.Length > 250, "The field Description cannot be longer than 250 characters.")
+            .Bind(() =>
+            {
+                Description = description;
+                return Result.Success();
+            });   
     }
     
     protected Transaction()

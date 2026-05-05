@@ -25,6 +25,9 @@ public class AccountRepository(IUnitOfWork unitOfWork, IDbConnection connection)
                 account.Name,
                 account.Type,
                 account.InitialBalance,
+                account.IsActive,
+                account.CreatedAt,
+                account.CurrentBalance
             },
             unitOfWork.Transaction
         );
@@ -35,9 +38,8 @@ public class AccountRepository(IUnitOfWork unitOfWork, IDbConnection connection)
             new
             {
                 account.Id,
-                account.Name,
                 account.Type,
-                account.IsActive,
+                account.IsActive
             },
             unitOfWork.Transaction
         ) > 0;

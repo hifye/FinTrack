@@ -145,4 +145,11 @@ public class Result<T> : Result
             return Result.Failure(Error!);
         return await func(Value!);
     }
+    
+    public Result Bind(Func<T, Result> func)
+    {
+        if (IsFailure)
+            return Result.Failure(Error!);
+        return func(Value!);
+    }
 }

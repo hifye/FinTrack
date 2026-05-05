@@ -34,24 +34,38 @@ public class Category
             .Map(() => new Category(userId, name, type));
     }
 
-    public Result Update(Guid id, string name, string type, bool isActive)
+    public Result Patch(string? name, string? type, bool? isActive)
     {
-        return Guard.AgainstOutOfRange(id == Guid.Empty, "The Category id is mandatory.")
-            .Bind(() => Guard.AgainstNullOrWhiteSpace(name, "The field name is mandatory."))
-            .Bind(() => name.Length > 100
-                ? Result.Failure("The field name cannot be longer than 100 characters.")
-                : Result.Success())
-            .Bind(() => Guard.AgainstNullOrWhiteSpace(type, "The field type is mandatory"))
-            .Bind(() => type.Length > 100
-                ? Result.Failure("The field type cannot be longer than 100 characters.")
-                : Result.Success())
+        return Guard.AgainstOutOfRange(name == null && type == null && isActive == null, "At least one field must be provided for patching.")
+            .Bind(() => name != null ? UpdateName(name) : Result.Success())
+            .Bind(() => type != null ? UpdateType(type) : Result.Success())
+            .Bind(() => isActive != null ? UpdateIsActive(isActive.Value) : Result.Success());
+    }
+
+    private Result UpdateName(string name)
+    {
+        return Guard.AgainstOutOfRange(name.Length > 100, "The field name cannot be longer than 100 characters.")
             .Bind(() =>
             {
                 Name = name;
-                Type = type;
-                IsActive = isActive;
                 return Result.Success();
             });
+    }
+
+    private Result UpdateType(string type)
+    {
+        return Guard.AgainstOutOfRange(type.Length > 100, "The field type cannot be longer than 100 characters.") 
+            .Bind(() =>
+            {
+                Type = type;
+                return Result.Success();
+            });
+    }
+
+    private Result UpdateIsActive(bool isActive)
+    {
+        IsActive = isActive;
+        return Result.Success();
     }
     
     protected Category() { }

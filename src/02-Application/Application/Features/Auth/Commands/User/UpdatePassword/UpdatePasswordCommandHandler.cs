@@ -4,12 +4,12 @@ using Application.Interfaces.UnitOfWork;
 using Domain.Common;
 using MediatR;
 
-namespace Application.Features.Auth.Commands.User.Update;
+namespace Application.Features.Auth.Commands.User.UpdatePassword;
 
-public class UpdateUserCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork, ICurrentUserService currentUser, IPasswordHasher passwordHasher)
-    : IRequestHandler<UpdateUserCommand, Result>
+public class UpdatePasswordCommandHandler(IUserRepository userRepository, IUnitOfWork unitOfWork, ICurrentUserService currentUser, IPasswordHasher passwordHasher)
+    : IRequestHandler<UpdatePasswordCommand, Result>
 {
-    public async Task<Result> Handle(UpdateUserCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdatePasswordCommand command, CancellationToken cancellationToken)
     {
         var user = await userRepository.GetUserById(currentUser.UserId);
         if(user is null)
@@ -17,7 +17,7 @@ public class UpdateUserCommandHandler(IUserRepository userRepository, IUnitOfWor
         
         var hash = passwordHasher.HashPassword(command.Password);
         
-        var result = user.Update(hash);
+        var result = user.UpdatePassword(hash);
         if(result.IsFailure)
             return Result.Failure("Failed to update user");
         

@@ -32,7 +32,7 @@ public class User
             .Map(validEmail => new User(name, validEmail, passwordHash));
     }
 
-    public Result Update(string passwordHash)
+    public Result UpdatePassword(string passwordHash)
     {
         return Guard.AgainstNullOrWhiteSpace(passwordHash, "Password cannot be empty.")
             .Bind(() =>

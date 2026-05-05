@@ -27,7 +27,9 @@ public class TransactionRepository(IUnitOfWork unitOfWork, IDbConnection connect
                 transaction.RecurringId,
                 transaction.Amount,
                 transaction.Type,
-                transaction.Description
+                transaction.Description,
+                transaction.CreatedAt,
+                transaction.TransactionDate
             },
             unitOfWork.Transaction
         );
@@ -37,9 +39,11 @@ public class TransactionRepository(IUnitOfWork unitOfWork, IDbConnection connect
             TransactionSql.UpdateTransaction,
             new
             {
+                transaction.Id,
                 transaction.Amount,
                 transaction.Type,
-                transaction.Description
+                transaction.Description,
+                transaction.UpdatedAt
             },
             unitOfWork.Transaction
         ) > 0;

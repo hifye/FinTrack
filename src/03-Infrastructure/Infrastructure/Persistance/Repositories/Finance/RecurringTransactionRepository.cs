@@ -27,7 +27,12 @@ public class RecurringTransactionRepository(IUnitOfWork unitOfWork, IDbConnectio
                 recurringTransaction.Amount,
                 recurringTransaction.Type,
                 recurringTransaction.Description,
-                recurringTransaction.Frequency
+                recurringTransaction.Frequency,
+                recurringTransaction.NextOccurrence,
+                recurringTransaction.StartDate,
+                recurringTransaction.EndDate,
+                recurringTransaction.IsActive,
+                recurringTransaction.CreatedAt
             },
             unitOfWork.Transaction
         );
@@ -41,7 +46,8 @@ public class RecurringTransactionRepository(IUnitOfWork unitOfWork, IDbConnectio
                 recurringTransaction.Amount,
                 recurringTransaction.Type,
                 recurringTransaction.Description,
-                recurringTransaction.Frequency
+                recurringTransaction.Frequency,
+                recurringTransaction.IsActive
             },
             unitOfWork.Transaction
         ) > 0;
