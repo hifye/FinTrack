@@ -11,21 +11,21 @@ public class PatchAccountCommandHandler(IAccountRepository accountRepository, IU
 {
     public async Task<Result> Handle(PatchAccountCommand command, CancellationToken cancellationToken)
     {
-        var category = await accountRepository.GetAccountById(command.Id);
-        if (category is null)
+        var account = await accountRepository.GetAccountById(command.Id);
+        if (account is null)
         {
             logger.LogWarning("Account with ID {AccountId} not found", command.Id);
-            return Result.Failure("Category not found.", ErrorType.NotFound);
+            return Result.Failure("Account not found.", ErrorType.NotFound);
         }
-        
-        var result = category.Patch(command.Type, command.IsActive);
+
+        var result = account.Patch(command.Type, command.IsActive);
         if (result.IsFailure)
         {
             logger.LogWarning("Failed to patch account {AccountId}", command.Id);
             return result;
         }
-        
-        await accountRepository.UpdateAccount(category);
+
+        await accountRepository.UpdateAccount(account);
         await unitOfWork.CommitAsync();
         return Result.Success();
     }

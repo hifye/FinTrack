@@ -19,6 +19,7 @@ public class Transaction
     
     private Transaction(Guid userId, Guid accountId, Guid categoryId, Guid recurringId, Price amount, string type, string description)
     {
+        Id = Guid.NewGuid();
         UserId = userId;
         AccountId = accountId;
         CategoryId = categoryId;

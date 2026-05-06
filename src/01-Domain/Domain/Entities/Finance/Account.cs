@@ -16,6 +16,7 @@ public class Account
 
     private Account(Guid userId, string name, string type, Price initialBalance)
     {
+        Id = Guid.NewGuid();
         UserId = userId;
         Name = name;
         Type = type;

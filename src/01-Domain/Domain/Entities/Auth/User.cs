@@ -14,6 +14,7 @@ public class User
 
     private User(string name, Email email, string passwordHash)
     {
+        Id = Guid.NewGuid();
         Name = name;
         Email = email;
         PasswordHash = passwordHash;

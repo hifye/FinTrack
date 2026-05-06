@@ -67,7 +67,7 @@ public class Result
     /// <param name="func">A função que retorna o próximo resultado com valor.</param>
     /// <returns>O resultado da função se o atual for sucesso; caso contrário, um novo resultado de falha do tipo <typeparamref name="T"/>.</returns>
     public Result<T> Bind<T>(Func<Result<T>> func)
-        => (Result<T>)(IsFailure ? Failure(Error!, ErrorType) : func());
+        => IsFailure ? Result<T>.Failure(Error!, ErrorType) : func();
 
     /// <summary>
     /// Transforma o resultado atual em um novo tipo se for sucesso.
@@ -76,7 +76,7 @@ public class Result
     /// <param name="func">A função de mapeamento que retorna o novo valor.</param>
     /// <returns>Um resultado de sucesso com o valor mapeado ou um resultado de falha.</returns>
     public Result<T> Map<T>(Func<T> func)
-        => (Result<T>)(IsFailure ? Failure(Error!, ErrorType) : Result<T>.Success(func()));
+        => IsFailure ? Result<T>.Failure(Error!, ErrorType) : Result<T>.Success(func());
 
     /// <summary>
     /// Tenta executar uma ação e retorna sucesso ou falha em caso de exceção.
@@ -112,7 +112,7 @@ public class Result
     /// <param name="func">A função assíncrona que retorna o próximo resultado com valor.</param>
     /// <returns>Uma tarefa que representa a operação assíncrona, contendo o resultado da função ou um novo resultado de falha.</returns>
     public async Task<Result<T>> BindAsync<T>(Func<Task<Result<T>>> func)
-        => (Result<T>)(IsFailure ? Failure(Error!, ErrorType) : await func());
+        => IsFailure ? Result<T>.Failure(Error!, ErrorType) : await func();
 }
 
 /// <summary>

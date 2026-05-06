@@ -22,6 +22,7 @@ public class RecurringTransaction
     private RecurringTransaction(Guid userId, Guid accountId, Guid categoryId, Price amount, string type,
         string description, string frequency)
     {
+        Id = Guid.NewGuid();
         UserId = userId;
         AccountId = accountId;
         CategoryId = categoryId;

@@ -13,6 +13,7 @@ public class RefreshToken
     
     private RefreshToken(Guid userId, string token, DateTime expiresAt)
     {
+        Id = Guid.NewGuid();
         UserId = userId;
         Token = token;
         ExpiresAt = expiresAt;

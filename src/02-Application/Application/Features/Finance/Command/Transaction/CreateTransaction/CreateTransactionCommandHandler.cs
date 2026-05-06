@@ -23,21 +23,21 @@ public class CreateTransactionCommandHandler(
         CancellationToken cancellationToken
     )
     {
-        var category = categoryRepository.GetCategoryById(command.CategoryId);
+        var category = await categoryRepository.GetCategoryById(command.CategoryId);
         if (category is null)
         {
             logger.LogWarning("Category with ID {CategoryId} not found", command.CategoryId);
             return Result<Guid>.Failure("Category not found.", ErrorType.NotFound);
         }
 
-        var account = accountRepository.GetAccountById(command.AccountId);
+        var account = await accountRepository.GetAccountById(command.AccountId);
         if (account is null)
         {
             logger.LogWarning("Account with ID {AccountId} not found", command.AccountId);
             return Result<Guid>.Failure("Account not found.", ErrorType.NotFound);
         }
 
-        var recurringTransaction = recurringTransactionRepository.GetRecurringTransactionById(
+        var recurringTransaction = await recurringTransactionRepository.GetRecurringTransactionById(
             command.RecurringId
         );
         if (recurringTransaction is null)

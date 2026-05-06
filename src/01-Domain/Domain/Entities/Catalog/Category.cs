@@ -13,6 +13,7 @@ public class Category
 
     private Category(Guid userId, string name, string type)
     {
+        Id = Guid.NewGuid();
         UserId = userId;
         Name = name;
         Type = type;
