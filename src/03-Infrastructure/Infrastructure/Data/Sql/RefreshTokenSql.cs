@@ -25,7 +25,7 @@ public class RefreshTokenSql
                                                   (@Token),
                                                   (@ExpiresAt), 
                                                   (@IsRevoked), 
-                                                  (@CreatedAt)
+                                                  (@CreatedAt))
                                              """;
 
     public const string RevokeRefreshToken = """

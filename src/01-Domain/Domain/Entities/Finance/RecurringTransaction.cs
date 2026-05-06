@@ -44,14 +44,14 @@ public class RecurringTransaction
             .Bind(() => Guard.AgainstOutOfRange(categoryId == Guid.Empty, "The field Category id cannot be empty."))
             .Bind(() => Guard.AgainstNullOrWhiteSpace(type, "The field Type is mandatory."))
             .Bind(() => type.Length > 100
-                ? Result.Failure("The field Type cannot be longer than 100 characters.")
+                ? Result.Failure("The field Type cannot be longer than 100 characters.", ErrorType.Validation)
                 : Result.Success())
             .Bind(() => description.Length > 250
-                ? Result.Failure("The field Description cannot be longer than 250 characters.")
+                ? Result.Failure("The field Description cannot be longer than 250 characters.", ErrorType.Validation)
                 : Result.Success())
             .Bind(() => Guard.AgainstNullOrWhiteSpace(frequency, "The field Frequency is mandatory."))
             .Bind(() => frequency.Length > 50
-                ? Result.Failure("The field Frequency cannot be longer than 50 characters.")
+                ? Result.Failure("The field Frequency cannot be longer than 50 characters.", ErrorType.Validation)
                 : Result.Success())
             .Bind(() => Price.Create(amount))
             .Map(validAmount =>

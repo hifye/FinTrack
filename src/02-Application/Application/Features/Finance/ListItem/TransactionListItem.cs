@@ -8,7 +8,6 @@ public record TransactionListItem(
     decimal Amount,
     string Type,
     string Description,
-    DateTime CreatedAt,
     DateTime TransactionDate,
     DateTime UpdatedAt
 );

@@ -10,4 +10,4 @@ public record CreateRecurringTransactionCommand(
     string Type,
     string Description,
     string Frequency
-) : IRequest<Result>;
+) : IRequest<Result<Guid>>;

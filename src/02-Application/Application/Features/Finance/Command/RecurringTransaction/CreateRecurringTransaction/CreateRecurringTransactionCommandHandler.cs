@@ -4,6 +4,7 @@ using Application.Interfaces.Services;
 using Application.Interfaces.UnitOfWork;
 using Domain.Common;
 using MediatR;
+using Microsoft.Extensions.Logging;
 
 namespace Application.Features.Finance.Command.RecurringTransaction.CreateRecurringTransaction;
 
@@ -12,18 +13,25 @@ public class CreateRecurringTransactionCommandHandler(
     IUnitOfWork unitOfWork,
     ICategoryRepository categoryRepository,
     IAccountRepository accountRepository,
-    ICurrentUserService currentUser)
-    : IRequestHandler<CreateRecurringTransactionCommand, Result>
+    ICurrentUserService currentUser, ILogger<CreateRecurringTransactionCommandHandler> logger)
+    : IRequestHandler<CreateRecurringTransactionCommand, Result<Guid>>
 {
-    public async Task<Result> Handle(CreateRecurringTransactionCommand command, CancellationToken cancellationToken)
+    public async Task<Result<Guid>> Handle(CreateRecurringTransactionCommand command, CancellationToken cancellationToken)
     {
         var account = accountRepository.GetAccountById(command.AccountId);
         if (account is null)
-            return Result.Failure("Account not found");
+        {
+            logger.LogWarning("Account with ID {AccountId} not found", command.AccountId);
+            return Result<Guid>.Failure("Account not found", ErrorType.NotFound);
+        }
+            
         
         var category = categoryRepository.GetCategoryById(command.CategoryId);
         if (category is null)
-            return Result.Failure("Category Not Found");
+        {
+            logger.LogWarning("Category with ID {CategoryId} not found", command.CategoryId);
+            return Result<Guid>.Failure("Category Not Found", ErrorType.NotFound);
+        }
         
         return await Domain.Entities.Finance.RecurringTransaction
             .Create(currentUser.UserId, 
@@ -37,7 +45,7 @@ public class CreateRecurringTransactionCommandHandler(
             {
                 await recurringTransactionRepository.CreateRecurringTransaction(recurringTransaction);
                 await unitOfWork.CommitAsync();
-                return Result.Success();
+                return Result<Guid>.Success(recurringTransaction.Id);
             });
     }
 }

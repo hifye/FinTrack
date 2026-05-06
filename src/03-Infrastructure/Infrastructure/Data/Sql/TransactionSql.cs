@@ -26,7 +26,6 @@ public static class TransactionSql
                                                        type                AS Type,
                                                        description         AS Description,
                                                        transaction_date    AS TransactionDate,
-                                                       created_at          AS CreatedAt,
                                                        updated_at          AS UpdatedAt
                                                 FROM finance.transactions
                                                 WHERE id = @Id
@@ -40,9 +39,8 @@ public static class TransactionSql
                                                          amount              AS Amount,
                                                          type                AS Type,
                                                          description         AS Description,
-                                                         created_at          AS CreatedAt,
                                                          transaction_date    AS TransactionDate,
-                                                         user_id             AS UserId
+                                                         updated_at          AS UpdatedAt
                                                   FROM finance.transactions
                                                   WHERE user_id = @UserId
                                                   ORDER BY created_at DESC
@@ -79,7 +77,7 @@ public static class TransactionSql
                                                  (@Type), 
                                                  (@Description),
                                                  (@TransactionDate),
-                                                 (@CreatedAt)
+                                                 (@CreatedAt))
                                             """;
 
     public const string UpdateTransaction = """

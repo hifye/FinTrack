@@ -15,6 +15,7 @@ using Application.Features.Finance.Queries.RecurringTransaction.GetRecurringTran
 using Application.Features.Finance.Queries.Transaction.GetTransactionDetails;
 using Application.Features.Finance.Queries.Transaction.GetTransactionsByUserId;
 using Application.Features.Finance.Queries.Transaction.GetTransactionSummary;
+using FinTrack.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -28,167 +29,191 @@ namespace FinTrack.Controllers.Finance;
 public class FinanceController(IMediator mediator) : ControllerBase
 {
 
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AccountListItem), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]   
-    [HttpGet("GetAccountDetails/{id:guid}")]
+    [HttpGet("account/{id:guid}")]
     public async Task<ActionResult<AccountListItem>> GetAccountDetails(Guid id)
     {
         var result = await mediator.Send(new GetAccountDetailsQuery(id));
-        return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
+        return result.ToActionResult();
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(AccountListItem), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]   
-    [HttpGet("GetAccountsByUserId")]
+    [HttpGet("accounts")]
     public async Task<ActionResult<IReadOnlyList<AccountListItem>>> GetAccountsByUserId()
     {
         var result = await mediator.Send(new GetAccountsByUserIdQuery());
-        return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
+        return result.ToActionResult();
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(RecurringTransactionListItem), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]  
-    [HttpGet("GetRecurringTransactionDetails/{id:guid}")]
+    [HttpGet("recurring-transaction/{id:guid}")]
     public async Task<ActionResult<RecurringTransactionListItem>> GetRecurringTransactionDetails(Guid id)
     {
         var result = await mediator.Send(new GetRecurringTransactionDetailsQuery(id));
-        return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
+        return result.ToActionResult();
     }
     
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(RecurringTransactionListItem), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]  
-    [HttpGet("GetRecurringTransactionsByUserId")]
+    [HttpGet("recurring-transactions")]
     public async Task<ActionResult<IReadOnlyList<RecurringTransactionListItem>>> GetRecurringTransactionsByUserId()
     {
         var result = await mediator.Send(new GetRecurringTransactionsByUserIdQuery());
-        return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
+        return result.ToActionResult();
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TransactionListItem), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpGet("GetTransactionDetails/{id:guid}")]
+    [HttpGet("transaction/{id:guid}")]
     public async Task<ActionResult<TransactionListItem>> GetTransactionDetails(Guid id)
     {
         var result = await mediator.Send(new GetTransactionDetailsQuery(id));
-        return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
+        return result.ToActionResult();
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TransactionListItem), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)] 
-    [HttpGet("GetTransactionsByUserId")]
+    [HttpGet("transactions")]
     public async Task<ActionResult<IReadOnlyList<TransactionListItem>>> GetTransactionsByUserId()
     {
         var result = await mediator.Send(new GetTransactionsByUserIdQuery());
-        return result.IsSuccess ? Ok(result.Value) : NotFound(result.Error);
+        return result.ToActionResult();
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(TransactionSummary), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpGet("GetTransactionSummary")]
+    [HttpGet("transaction-summary")]
     public async Task<ActionResult<TransactionSummary>> GetTransactionSummary([FromQuery] DateTime startDate,
         [FromQuery] DateTime endDate)
     {
         var result = await mediator.Send(new GetTransactionSummaryQuery(startDate, endDate));
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        return result.ToActionResult();
     }
     
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpPost("CreateAccount")]
+    [HttpPost("account")]
     public async Task<ActionResult> CreateAccount(CreateAccountCommand command)
     {
-        var result  = await mediator.Send(command);
-        return result.IsSuccess ? Created() : BadRequest(result.Error);
+        var result = await mediator.Send(command);
+        if (result.IsFailure)
+            return result.ToActionResult();
+
+        return CreatedAtAction(
+            nameof(GetAccountDetails),
+            new { id = result.Value },
+            result.Value
+        );
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpPatch("PatchAccount")]
-    public async Task<ActionResult> PatchAccount(PatchAccountCommand command)
+    [HttpPatch("account/{id:guid}")]
+    public async Task<ActionResult> PatchAccount(Guid id, PatchAccountCommand command)
     {
+        command = command with { Id = id };
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok() : NotFound(result.Error);
+        return result.ToActionResult(StatusCodes.Status204NoContent);
     }
 
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpDelete("DeleteAccount")]
-    public async Task<ActionResult> DeleteAccount(DeleteAccountCommand command)
+    [HttpDelete("account/{id:guid}")]
+    public async Task<ActionResult> DeleteAccount(Guid id)
     {
-        var result = await mediator.Send(command);
-        return result.IsSuccess ? NoContent() : NotFound(result.Error);
+        var result = await mediator.Send(new DeleteAccountCommand(id));
+        return result.ToActionResult(StatusCodes.Status204NoContent);
     }
 
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpPost("CreateRecurringTransaction")]
+    [HttpPost("recurring-transaction")]
     public async Task<ActionResult> CreateRecurringTransaction(CreateRecurringTransactionCommand command)
     {
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Created() : BadRequest(result.Error);
+        if (result.IsFailure)
+            return result.ToActionResult();
+
+        return CreatedAtAction(
+            nameof(GetRecurringTransactionDetails),
+            new { id = result.Value },
+            result.Value
+        );
     }
     
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpPatch("PatchRecurringTransaction")]
-    public async Task<ActionResult> PatchRecurringTransaction(PatchRecurringTransactionCommand command)
+    [HttpPatch("recurring-transaction/{id:guid}")]
+    public async Task<ActionResult> PatchRecurringTransaction(Guid id, PatchRecurringTransactionCommand command)
     {
+        command = command with { Id = id };
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok() : NotFound(result.Error);
+        return result.ToActionResult(StatusCodes.Status204NoContent);
     }
     
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpDelete("DeleteRecurringTransaction")]
-    public async Task<ActionResult> DeleteRecurringTransaction(DeleteRecurringTransactionCommand command)
+    [HttpDelete("recurring-transaction/{id:guid}")]
+    public async Task<ActionResult> DeleteRecurringTransaction(Guid id)
     {
-        var result = await mediator.Send(command);
-        return result.IsSuccess ? NoContent() : NotFound(result.Error);
+        var result = await mediator.Send(new DeleteRecurringTransactionCommand(id));
+        return result.ToActionResult(StatusCodes.Status204NoContent);
     }
 
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(Guid), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpPost("CreateTransaction")]
+    [HttpPost("transaction")]
     public async Task<ActionResult> CreateTransaction(CreateTransactionCommand command)
     {
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Created() : BadRequest(result.Error);
+        if (result.IsFailure)
+            return result.ToActionResult();
+
+        return CreatedAtAction(
+            nameof(GetTransactionDetails),
+            new { id = result.Value },
+            result.Value
+        );
     }
 
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpPatch("PatchTransaction")]
-    public async Task<ActionResult> PatchTransaction(PatchTransactionCommand command)
+    [HttpPatch("transaction/{id:guid}")]
+    public async Task<ActionResult> PatchTransaction(Guid id, PatchTransactionCommand command)
     {
+        command = command with { Id = id };
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok() : BadRequest(result.Error);
+        return result.ToActionResult(StatusCodes.Status204NoContent);
     }
 
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [HttpDelete("DeleteTransaction")]
-    public async Task<ActionResult> DeleteTransaction(DeleteTransactionCommand command)
+    [HttpDelete("transaction/{id:guid}")]
+    public async Task<ActionResult> DeleteTransaction(Guid id)
     {
-        var result = await mediator.Send(command);
-        return result.IsSuccess ? NoContent() : NotFound(result.Error);
+        var result = await mediator.Send(new DeleteTransactionCommand(id));
+        return result.ToActionResult(StatusCodes.Status204NoContent);
     }
 }

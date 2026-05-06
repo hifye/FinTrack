@@ -21,15 +21,15 @@ public class RefreshTokenCommandHandler(
     {
         var existing  = await refreshTokenRepository.GetRefreshToken(command.RefreshToken, cancellationToken);
         if(existing is null)
-            return Result<TokenResponse>.Failure("Invalid or expired refresh token.");
+            return Result<TokenResponse>.Failure("Invalid or expired refresh token.", ErrorType.Validation);
         
         var user = await userRepository.GetUserById(existing.UserId);
         if(user is null)
-            return Result<TokenResponse>.Failure("User not found.");
+            return Result<TokenResponse>.Failure("User not found.", ErrorType.NotFound);
 
         var revokeResult = existing.Revoke();
         if(revokeResult.IsFailure)
-            return Result<TokenResponse>.Failure(revokeResult.Error!);
+            return Result<TokenResponse>.Failure(revokeResult.Error!, ErrorType.Validation);
 
         await refreshTokenRepository.RevokeRefreshToken(existing.Id, cancellationToken);
         
@@ -39,7 +39,7 @@ public class RefreshTokenCommandHandler(
         
         var newRefreshToken = Domain.Entities.Auth.RefreshToken.Create(user.Id, rawRefreshToken, expiresAt);
         if (newRefreshToken.IsFailure)
-            return Result<TokenResponse>.Failure(newRefreshToken.Error!);
+            return Result<TokenResponse>.Failure(newRefreshToken.Error!, ErrorType.Validation);
         
         await refreshTokenRepository.CreateRefreshToken(newRefreshToken.Value!, cancellationToken);
         await unitOfWork.CommitAsync();

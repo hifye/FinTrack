@@ -9,9 +9,13 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {
-        services.AddMediatR(opt => opt.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly));
-        services.AddValidatorsFromAssembly(typeof(DependencyInjection).Assembly);
-        services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        services.AddMediatR(opt =>
+        {
+            opt.RegisterServicesFromAssembly(typeof(DependencyInjection).Assembly);
+            opt.AddBehavior(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));
+            opt.AddBehavior(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+        });
+        
         return services;
     }
 }

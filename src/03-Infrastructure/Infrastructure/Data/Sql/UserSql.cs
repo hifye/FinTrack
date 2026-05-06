@@ -35,7 +35,7 @@ public class UserSql
                                             (@Name),
                                             (@Email),
                                             (@PasswordHash),
-                                            (@CreatedAt)
+                                            (@CreatedAt))
                                      )
                                      """;
 

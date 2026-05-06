@@ -5,8 +5,10 @@ public record RecurringTransactionListItem(
     Guid AccountId,
     Guid CategoryId,
     decimal Amount,
+    string Type,
+    string Description,
     string Frequency,
     DateTime NextOccurrence,
-    DateTime CreatedAt,
+    DateTime EndDate,
     bool IsActive
 );

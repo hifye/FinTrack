@@ -39,10 +39,10 @@ public class Transaction
             .Bind(() => Guard.AgainstOutOfRange(recurringId == Guid.Empty, "The field Recurring id cannot be empty"))
             .Bind(() => Guard.AgainstNullOrWhiteSpace(type, "The field Type is mandatory"))
             .Bind(() => type.Length > 100
-                ? Result.Failure("The field Type cannot be longer than 100 characters.")
+                ? Result.Failure("The field Type cannot be longer than 100 characters.", ErrorType.Validation)
                 : Result.Success())
             .Bind(() => description.Length > 250
-                ? Result.Failure("The field Description cannot be longer than 250 characters.")
+                ? Result.Failure("The field Description cannot be longer than 250 characters.", ErrorType.Validation)
                 : Result.Success())
             .Bind(() => Price.Create(amount))
             .Map(validPrice =>

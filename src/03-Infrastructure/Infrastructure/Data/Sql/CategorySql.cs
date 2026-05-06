@@ -45,7 +45,7 @@ public class CategorySql
                                               (@Name),
                                               (@Type), 
                                               (@IsActive),
-                                              (@CreatedAt)
+                                              (@CreatedAt))
                                          """;
 
     public const string UpdateCategory = """

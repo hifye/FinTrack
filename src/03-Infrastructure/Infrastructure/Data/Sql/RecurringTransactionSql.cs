@@ -27,9 +27,9 @@ public class RecurringTransactionSql
                                                                 type                      AS Type,
                                                                 description               AS Description,
                                                                 frequency                 AS Frequency,
-                                                                start_date                AS StartDate,
-                                                                end_date                  AS EndDate,
                                                                 next_occurrence           AS NextOccurrence,
+                                                                end_date                  AS EndDate,
+                                                                is_active                 AS IsActive
                                                          FROM finance.recurring_transactions
                                                          WHERE id = @Id
                                                          """;
@@ -39,9 +39,11 @@ public class RecurringTransactionSql
                                                                   account_id                AS AccountId,
                                                                   category_id               AS CategoryId,
                                                                   amount                    AS Amount,
+                                                                  type                      AS Type,
+                                                                  description               AS Description,
                                                                   frequency                 AS Frequency,
                                                                   next_occurrence           AS NextOccurrence,
-                                                                  created_at                AS CreatedAt,
+                                                                  end_date                  AS EndDate,
                                                                   is_active                 AS IsActive
                                                            FROM finance.recurring_transactions
                                                            WHERE user_id = @UserId
@@ -74,7 +76,7 @@ public class RecurringTransactionSql
                                                           (@StartDate), 
                                                           (@EndDate), 
                                                           (@IsActive), 
-                                                          (@CreatedAt)
+                                                          (@CreatedAt))
                                                      """;
 
     public const string UpdateRecurringTransaction = """

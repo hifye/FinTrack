@@ -54,7 +54,7 @@ public class AccountSql
                                         (@InitialBalance), 
                                         (@CurrentBalance), 
                                         (@IsActive), 
-                                        (@CreatedAt)
+                                        (@CreatedAt))
                                         """;
 
     public const string UpdateAccount = """

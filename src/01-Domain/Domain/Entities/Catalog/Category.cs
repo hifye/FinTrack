@@ -25,11 +25,11 @@ public class Category
         return Guard.AgainstOutOfRange(userId == Guid.Empty, "The User id is mandatory.")
             .Bind(() => Guard.AgainstNullOrWhiteSpace(name, "The field name is mandatory."))
             .Bind(() => name.Length > 100
-                ? Result.Failure("The field name cannot be longer than 100 characters.")
+                ? Result.Failure("The field name cannot be longer than 100 characters.", ErrorType.Validation)
                 : Result.Success())
             .Bind(() => Guard.AgainstNullOrWhiteSpace(type, "The field type is mandatory"))
             .Bind(() => type.Length > 100
-                ? Result.Failure("The field type cannot be longer than 100 characters.")
+                ? Result.Failure("The field type cannot be longer than 100 characters.", ErrorType.Validation)
                 : Result.Success())
             .Map(() => new Category(userId, name, type));
     }

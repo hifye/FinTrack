@@ -3,6 +3,7 @@ using Application.Features.Auth.Commands.User.Login;
 using Application.Features.Auth.Commands.User.Logout;
 using Application.Features.Auth.Commands.User.Register;
 using Application.Features.Auth.Commands.User.UpdatePassword;
+using FinTrack.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +21,7 @@ public class AuthController(IMediator mediator) : ControllerBase
     public async Task<ActionResult> Login(LoginCommand command)
     {
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        return result.ToActionResult();
     }
     
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -30,37 +31,40 @@ public class AuthController(IMediator mediator) : ControllerBase
     public async Task<ActionResult> Register(RegisterCommand command)
     {
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Created() : BadRequest(result.Error);
+        return result.ToActionResult(StatusCodes.Status201Created);
     }
     
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Authorize]
-    [HttpPut("update")]
+    [HttpPatch("update")]
     public async Task<ActionResult> UpdatePassword(UpdatePasswordCommand command)
     {
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok() : NotFound(result.Error);
+        return result.ToActionResult();
     }
 
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Authorize]
-    [HttpPut("logout")]
+    [HttpPost("logout")]
     public async Task<ActionResult> Logout(LogoutCommand command)
     {
         var result = await mediator.Send(command);
-        return result.IsSuccess ? NoContent() : BadRequest(result.Error);
+        return result.ToActionResult(StatusCodes.Status204NoContent);
     }
     
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [Authorize]
     [HttpPost("refresh-token")]
     public async Task<ActionResult> RefreshToken(RefreshTokenCommand command)
     {
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+        return result.ToActionResult();
     }
 }

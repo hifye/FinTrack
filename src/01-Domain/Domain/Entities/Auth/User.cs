@@ -25,7 +25,7 @@ public class User
         return Guard
             .AgainstNullOrWhiteSpace(name, "Name cannot be empty.")
             .Bind(() => name.Length > 200
-                ? Result.Failure("Name cannot be longer than 200 characters.")
+                ? Result.Failure("Name cannot be longer than 200 characters.", ErrorType.Validation)
                 : Result.Success())
             .Bind(() => Guard.AgainstNullOrWhiteSpace(passwordHash, "Password cannot be empty."))
             .Bind(() => Email.Create(email))

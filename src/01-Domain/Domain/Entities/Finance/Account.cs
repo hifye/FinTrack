@@ -30,10 +30,10 @@ public class Account
         return Guard.AgainstOutOfRange(userId == Guid.Empty, "The field User id is mandatory.")
             .Bind(() => Guard.AgainstNullOrWhiteSpace(name, "The field name is mandatory."))
             .Bind(() => name.Length > 50
-                ? Result.Failure("The name cannot be longer than 50 characters.")
+                ? Result.Failure("The name cannot be longer than 50 characters.", ErrorType.Validation)
                 : Result.Success())
             .Bind(() => Guard.AgainstNullOrWhiteSpace(type, "The field type is mandatory."))
-            .Bind(() => type.Length > 20 ? Result.Failure("The type cannot be longer than 20 characters.") : Result.Success())
+            .Bind(() => type.Length > 20 ? Result.Failure("The type cannot be longer than 20 characters.", ErrorType.Validation) : Result.Success())
             .Bind(() => Price.Create(initialBalance))
             .Map(validPrice => new Account(userId, name, type, validPrice));
     }
