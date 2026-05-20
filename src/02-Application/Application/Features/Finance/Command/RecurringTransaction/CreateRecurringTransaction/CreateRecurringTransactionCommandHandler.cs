@@ -18,7 +18,7 @@ public class CreateRecurringTransactionCommandHandler(
 {
     public async Task<Result<Guid>> Handle(CreateRecurringTransactionCommand command, CancellationToken cancellationToken)
     {
-        var account = accountRepository.GetAccountById(command.AccountId);
+        var account = await accountRepository.GetAccountById(command.AccountId);
         if (account is null)
         {
             logger.LogWarning("Account with ID {AccountId} not found", command.AccountId);
@@ -26,7 +26,7 @@ public class CreateRecurringTransactionCommandHandler(
         }
             
         
-        var category = categoryRepository.GetCategoryById(command.CategoryId);
+        var category = await categoryRepository.GetCategoryById(command.CategoryId);
         if (category is null)
         {
             logger.LogWarning("Category with ID {CategoryId} not found", command.CategoryId);

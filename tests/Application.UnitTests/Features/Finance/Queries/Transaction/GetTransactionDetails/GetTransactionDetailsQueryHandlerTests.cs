@@ -9,19 +9,19 @@ using Moq;
 namespace Application.UnitTests.Features.Finance.Queries.Transaction.GetTransactionDetails;
 
 /// <summary>
-/// Contém testes unitários para o <see cref="GetTransactionDetailsDetailsQueryHandler"/>.
+/// Contém testes unitários para o <see cref="GetTransactionDetailsQueryHandler"/>.
 /// </summary>
 public class GetTransactionDetailsQueryHandlerTests
 {
     private readonly Mock<ITransactionQueries> _transactionQueriesMock;
-    private readonly Mock<ILogger<GetTransactionDetailsDetailsQueryHandler>> _loggerMock;
-    private readonly GetTransactionDetailsDetailsQueryHandler _handler;
+    private readonly Mock<ILogger<GetTransactionDetailsQueryHandler>> _loggerMock;
+    private readonly GetTransactionDetailsQueryHandler _handler;
 
     public GetTransactionDetailsQueryHandlerTests()
     {
         _transactionQueriesMock = new Mock<ITransactionQueries>();
-        _loggerMock = new Mock<ILogger<GetTransactionDetailsDetailsQueryHandler>>();
-        _handler = new GetTransactionDetailsDetailsQueryHandler(
+        _loggerMock = new Mock<ILogger<GetTransactionDetailsQueryHandler>>();
+        _handler = new GetTransactionDetailsQueryHandler(
             _transactionQueriesMock.Object,
             _loggerMock.Object);
     }
